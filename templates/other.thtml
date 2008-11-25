@@ -1,0 +1,3 @@
+<h1>other</h1>
+<p>This is the news page which is using <b>templates/other.thtml</b></p>
+<p>{{OTHER_CONTENTS}}</p>
