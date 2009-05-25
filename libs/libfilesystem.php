@@ -9,7 +9,7 @@ class Filesystem {
     return true;
   }
 
-  function ls($path) {
+  function ls($path, $excludes = array()) {
     $files = array();
     $dirs = array();
     if ($directory = opendir($path)) {
@@ -17,11 +17,13 @@ class Filesystem {
         if ($this->debug) echo "f: $f<br />\n";
         $fpath = $path."/".$f;
         if ($f != "." && $f != "..") {
-          if (is_dir($fpath)) {
-            array_push($dirs, $f);
-          }
-          elseif (is_file($fpath)) {
-            array_push($files, $f);
+          if (!in_array($f, $excludes)) {
+            if (is_dir($fpath)) {
+              array_push($dirs, $f);
+            }
+            elseif (is_file($fpath)) {
+              array_push($files, $f);
+            }
           }
         }
       }
