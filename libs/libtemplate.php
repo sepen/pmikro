@@ -33,10 +33,12 @@ class Template {
     $patterns = array(); $replaces = array();
     foreach ($this->vars as $key=>$value) {
       if (is_array($value)) {
-        $regexp = '/<!-- loop: '.$key.' -->\s?\n?(\s*.*?\n?)\s*<!-- end loop -->/';
-        preg_match_all($regexp, $this->contents, $m);
-        $loop = $m[1][0];
-        $ltmp = '';
+        $regexp = '/<!-- loop: '.$key.' -->\n(.*\n)*<!-- end loop -->/';
+        preg_match($regexp, $this->contents, $m);
+        $loop = $m[0];
+        $loop = preg_replace('/<!-- loop: '.$key.' -->/', '', $loop);
+        $loop = preg_replace('/<!-- end loop -->/', '', $loop);
+        $ltmp = "";
         foreach($value as $k=>$v) {
           $aux = preg_replace('/{{'.$key.'\.KEY}}/', $k, $loop);
           $ltmp.= preg_replace('/{{'.$key.'.VALUE}}/', $v, $aux);
