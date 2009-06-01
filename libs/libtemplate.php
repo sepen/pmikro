@@ -40,7 +40,7 @@ class Template {
         $loop = preg_replace('/<!-- end loop -->/', '', $loop);
         $ltmp = "";
         foreach($value as $k=>$v) {
-          $aux = preg_replace('/{{'.$key.'\.KEY}}/', $k, $loop);
+          $aux = preg_replace('/{{'.$key.'.KEY}}/', $k, $loop);
           $ltmp.= preg_replace('/{{'.$key.'.VALUE}}/', $v, $aux);
         }
         $this->contents = preg_replace($regexp, $ltmp, $this->contents);
