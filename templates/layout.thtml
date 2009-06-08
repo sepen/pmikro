@@ -19,7 +19,7 @@
 <div id="navpanel">
 <!-- loop: NAVPANEL -->
 <span><a href="{{NAVPANEL.VALUE}}">{{NAVPANEL.KEY}}</a></span>
-<!-- end loop -->
+<!-- end loop: NAVPANEL -->
 </div>
 <div id="contents">
 {{CONTENTS}}
