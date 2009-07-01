@@ -39,9 +39,12 @@ class Template {
         $loop = preg_replace('/<!-- loop: '.$key.' -->/', '', $loop);
         $loop = preg_replace('/<!-- end loop: '.$key.' -->/', '', $loop);
         $ltmp = "";
-        foreach($value as $k=>$v) {
-          $aux = preg_replace('/{{'.$key.'.KEY}}/', $k, $loop);
-          $ltmp.= preg_replace('/{{'.$key.'.VALUE}}/', $v, $aux);
+        foreach ($value as $va) {
+          $loop_tmp = $loop;
+	        foreach($va as $k=>$v) {
+	          $loop_tmp = preg_replace('/{{'.$k.'}}/', $v, $loop_tmp);
+	        }
+          $ltmp.= $loop_tmp;
         }
         $this->contents = preg_replace($regexp, $ltmp, $this->contents);
       }
