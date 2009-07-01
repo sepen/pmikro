@@ -41,9 +41,9 @@ class Template {
         $ltmp = "";
         foreach ($value as $va) {
           $loop_tmp = $loop;
-	        foreach($va as $k=>$v) {
-	          $loop_tmp = preg_replace('/{{'.$k.'}}/', $v, $loop_tmp);
-	        }
+          foreach($va as $k=>$v) {
+            $loop_tmp = preg_replace('/{{'.$k.'}}/', $v, $loop_tmp);
+          }
           $ltmp.= $loop_tmp;
         }
         $this->contents = preg_replace($regexp, $ltmp, $this->contents);
