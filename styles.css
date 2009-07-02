@@ -8,6 +8,7 @@ body {
 
 a {
   color: #005a9c;
+  text-decoration: none;
 }
 
 img {
@@ -44,7 +45,6 @@ img {
 }
 #page #navpanel a {
   color: #1F2642;
-  text-decoration: none;
   font-weight: bold;
 }
 #page #navpanel a:hover {
