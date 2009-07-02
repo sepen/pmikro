@@ -1,3 +1,0 @@
-<h1>main</h1>
-<p>This is the main page which is using <b>templates/main.thtml</b></p>
-<p>{{MAIN_CONTENTS}}</p>

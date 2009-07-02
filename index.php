@@ -1,9 +1,8 @@
 <?php
 
-// ----------------------------------------------------------------------------
-// EDIT:
-$url = 'http://mikeux.dyndns.org/~sepen/pmikro';
-// ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+$url = 'http://mikeux.dyndns.org/pmikro';
+# ----------------------------------------------------------------------------
 
 if ($fdir = opendir('libs')) {
     while ($f = readdir($fdir)) {
@@ -19,29 +18,17 @@ else {
   exit;
 }
 
-// ----------------------------------------------------------------------------
-// EDIT:
+# ----------------------------------------------------------------------------
 $template = new Template('layout');
-$template->setvars(array(
-  'TITLE'    => 'pmikro',
-  'META'     => '<meta name="GENERATOR" content="pmikro" />',
-  'CSS'      => $url.'/styles/pmikro.css',
-  'HEADER'   => '<img src="'.$url.'/images/pmikro.jpg" alt="" />',
-  'NAVPANEL' => array(
-    'main'  => $url.'/index.php',
-    'other' => $url.'/other.php'
-  )  
+$template->setVars(array(
+  'HEAD' => file_get_contents('includes/head.html'),
+  'HEADER' => file_get_contents('includes/header.html'),
+  'CONTENTS' => file_get_contents('includes/example.html'),
+  'FOOTER' => file_get_contents('includes/footer.html')
 ));
-
-$main = new Template('main');
-$main->setvars(array(
-  'MAIN_CONTENTS' => '*** put here your contents for the MAIN section ***<br />'
-));
-
-$template->setvars(array(
-  'CONTENTS' => $main->getContents()
-));
+include('includes/navpanel.php'); # load $navpanel variable
+$template->setVars(array('NAVPANEL' => $navpanel));
 $template->show();
-// ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 ?>
