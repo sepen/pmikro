@@ -2,7 +2,7 @@
 
 # EDIT $url to fit your needs
 # ----------------------------------------------------------------------------
-$url = 'http://sepen.mine.nu/pmikro';
+$url = 'http://CHANGE.ME';
 # ----------------------------------------------------------------------------
 
 # include every library function or class in libs directory
