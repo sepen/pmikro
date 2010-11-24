@@ -1,9 +1,11 @@
 <?php
 
+# EDIT $url to fit your needs
 # ----------------------------------------------------------------------------
-$url = 'http://CHANGE.ME';
+$url = 'http://sepen.mine.nu/pmikro';
 # ----------------------------------------------------------------------------
 
+# include every library function or class in libs directory
 if ($fdir = opendir('libs')) {
     while ($f = readdir($fdir)) {
         if ($f != "." && $f != "..") {
@@ -18,15 +20,17 @@ else {
   exit;
 }
 
+# EDIT this part to fit your needs
+# note that you must respect the varible names you used in the layout selected
 # ----------------------------------------------------------------------------
 $template = new Template('layout');
 $template->setVars(array(
   'HEAD' => file_get_contents('includes/head.html'),
   'HEADER' => file_get_contents('includes/header.html'),
-  'CONTENTS' => file_get_contents('includes/example.html'),
+  'CONTENTS' => file_get_contents('includes/home.html'),
   'FOOTER' => file_get_contents('includes/footer.html')
 ));
-include('includes/navpanel.php'); # load $navpanel variable
+include('includes/navpanel.php'); # include navpanel array
 $template->setVars(array('NAVPANEL' => $navpanel));
 $template->show();
 # ----------------------------------------------------------------------------
