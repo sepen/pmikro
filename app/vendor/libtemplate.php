@@ -7,7 +7,8 @@ class Template {
   var $contents;
   var $vars = array();
     
-  function Template($name = "index") {
+  function __construct($name = "index") {
+    echo 'construct';
     $this->name = $name;
     $this->file = 'templates/'.$name.'.thtml';
     if (!file_exists($this->file)) {
