@@ -1,39 +1,50 @@
 <?php
 
+/*
+ * Template engine which do
+ *
+ * - Valid for static templates (html, xml, css, json, txt, md, ...)
+ * - Replaces contents based on associative arrays passed as arguments
+ * -
+ */
+
 /**
  * Class Template
  */
 class Template {
 
-    protected $name = '';
-    protected $file = '';
-    protected $contents = '';
-    protected $vars = [];
+    protected $templateName;
+    protected $templateType;
+    protected $templateFile;
+    protected $templateVars = [];
+    protected $templateOutput;
 
     /**
      * @param string $name
+     * @param string $type
      */
-    function __construct($name = 'index') {
-        $this->name = $name;
-        $this->file = pmikro::$appDir . '/views/templates/' . $this->name . '.template.html';
-        if (!file_exists($this->file)) {
-            die('ERROR: template does not exists '. $this->file);
+    function __construct($name = 'index', $type = 'html') {
+        $this->templateName = $name;
+        $this->templateType = $type;
+        $this->templateFile = pmikro::$appDir . '/views/templates/' . $this->templateName . '.template.' . $this->templateType;
+        if (!file_exists($this->templateFile)) {
+            die('ERROR: template does not exists '. $this->templateFile);
         }
-        $this->contents = file_get_contents($this->file);
+        $this->templateOutput = file_get_contents($this->templateFile);
     }
 
     /**
      * @param array $vars
      */
-    public function setVars($vars = array()) {
-        $this->vars = array_merge($this->vars, $vars);
+    public function setVars($vars = []) {
+        $this->templateVars = array_merge($this->templateVars, $vars);
     }
 
     /**
      * @return array
      */
     public function getVars() {
-        return $this->vars;
+        return $this->templateVars;
     }
 
     /**
@@ -41,7 +52,7 @@ class Template {
      */
     public function printVars() {
         echo "<pre>\n";
-        print_r($this->vars);
+        print_r($this->templateVars);
         echo "<pre><br />\n";
     }
 
@@ -50,29 +61,29 @@ class Template {
      */
     public function getContents() {
         $this->render();
-        return $this->contents;
+        return $this->templateOutput;
     }
 
     /**
      *
      */
-    public function show() {
+    public function printContents() {
         $this->render();
-        print $this->contents;
+        print $this->templateOutput;
     }
 
     /**
      *
      */
-    protected function render() {
-        $patterns = array();
-        $replaces = array();
-        foreach ($this->vars as $key => $value) {
+    private function render() {
+        $patterns = [];
+        $replaces = [];
+        foreach ($this->templateVars as $key => $value) {
             if (is_array($value)) {
                 $regexp = '/<!-- loop: ' . $key . ' -->\n'
                     . '(.*\n)*'
                     . '<!-- end loop: ' . $key . ' -->/';
-                preg_match($regexp, $this->contents, $m);
+                preg_match($regexp, $this->templateOutput, $m);
                 if (isset($m[0])) {
                     $loop = $m[0];
                     $loop = preg_replace('/<!-- loop: ' . $key . ' -->/', '', $loop);
@@ -85,14 +96,14 @@ class Template {
                         }
                         $ltmp .= $loop_tmp;
                     }
-                    $this->contents = preg_replace($regexp, $ltmp, $this->contents);
+                    $this->templateOutput = preg_replace($regexp, $ltmp, $this->templateOutput);
                 }
             } else {
                 array_push($patterns, '/{{' . $key . '}}/');
                 array_push($replaces, $value);
             }
         }
-        $this->contents = preg_replace($patterns, $replaces, $this->contents);
+        $this->templateOutput = preg_replace($patterns, $replaces, $this->templateOutput);
     }
 
 }
