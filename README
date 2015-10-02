@@ -7,10 +7,27 @@
 INSTALLATION
 
   Just copy it to your desired destination (i.e: /var/www/vhosts/mysite.com)
-  and edit the url variable in index.php to fit your needs. Also you could
-  personalize your installation by editing this file a bit more.
+  
+
+
+APACHE CONFIG EXAMPLE
+
+    <VirtualHost *:80>
+      ServerName pmikro
+
+      DocumentRoot "/var/www/vhosts/pmikro/pub"
+      <Directory "/var/www/vhosts/pmikro/pub">
+        AllowOverride All
+	Order Deny,Allow
+        Allow from All
+      </Directory>
+
+     CustomLog ${APACHE_LOG_DIR}/pmikro.access.log Combined
+     ErrorLog ${APACHE_LOG_DIR}/pmikro.error.log
+    </VirtualHost>
+
 
 
 BUGS AND REPORTS
 
-  Please contact to me: Jose V Beneyto, <sepen@crux.nu>
+  Jose V Beneyto, <sepen@crux.nu>
