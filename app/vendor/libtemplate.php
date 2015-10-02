@@ -9,7 +9,7 @@ class Template {
     
   function __construct($name = "index") {
     $this->name = $name;
-    $this->file = 'templates/'.$name.'.thtml';
+    $this->file = __DIR__ . '/../view/templates/'.$name.'.thtml';
     if (!file_exists($this->file)) {
       return false;
     }
