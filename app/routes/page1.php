@@ -1,6 +1,6 @@
 <?php
 
-Class page1 extends pmikro implements iPmikro {
+Class page1Controller extends pmikro implements iPmikroController {
 
     public static function getRoot() {
         self::$appOutput = '<html><body style="margin: 20px 0; text-align: center">'

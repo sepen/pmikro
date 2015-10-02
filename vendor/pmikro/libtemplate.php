@@ -5,7 +5,7 @@
  *
  * - Valid for static templates (html, xml, css, json, txt, md, ...)
  * - Replaces contents based on associative arrays passed as arguments
- * -
+ *
  */
 
 /**

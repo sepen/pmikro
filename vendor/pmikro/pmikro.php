@@ -65,24 +65,31 @@ Class pmikro {
      */
     protected static function route() {
 
-        (isset(self::$appRequestArray[0]) && self::$appRequestArray[0] != '') ? $route_0 = self::$appRequestArray[0] : $route_0 = 'root';
-        $routeFile = self::$appDir . '/routes/' . $route_0 . '.php';
+        $routeArray = ['root', 'root'];
+
+        if (isset(self::$appRequestArray[0]) && self::$appRequestArray[0] != '') {
+            $routeArray[0] = self::$appRequestArray[0];
+        }
+        $routeFile = self::$appDir . '/routes/' . $routeArray[0] . '.php';
 
         if (is_file($routeFile)) {
             require_once($routeFile);
-            (isset(self::$appRequestArray[1]) && self::$appRequestArray[1] != '') ? $route_1 = self::$appRequestArray[1] : $route_1 = 'root';
+            if (isset(self::$appRequestArray[1]) && self::$appRequestArray[1] != '') {
+                $routeArray[1] = self::$appRequestArray[1];
+            }
         }
         else {
-            $route_1 = $route_0;
-            $route_0 = 'root';
+            $routeArray[1] = $routeArray[0];
+            $routeArray[0] = 'root';
         }
-        $routeAction = strtolower(self::$appRequestMethod) . ucfirst(strtolower($route_1));
+        $routeClass = strtolower($routeArray[0]) . 'Controller';
+        $routeAction = strtolower(self::$appRequestMethod) . ucfirst(strtolower($routeArray[1]));
 
         // check if is a valid route
-        if (in_array('iPmikro', class_implements($route_0))) {
+        if (in_array('iPmikroController', class_implements($routeClass))) {
             // check function exists in class
-            if (in_array($routeAction, get_class_methods($route_0))) {
-                return $route_0::$routeAction();
+            if (in_array($routeAction, get_class_methods($routeClass))) {
+                return $routeClass::$routeAction();
             }
             else {
                 self::error(404);
@@ -101,10 +108,10 @@ Class pmikro {
     }
 
     /**
-     * @param $code
+     * @param $errorCode
      */
-    public static function error($code) {
-        echo file_get_contents(self::$appDir . '/views/static/error404.html');
+    public static function error($errorCode) {
+        echo file_get_contents(self::$appDir . '/views/static/error'.$errorCode.'.html');
     }
 
     /**
@@ -136,7 +143,12 @@ Class pmikro {
         $fd = fopen(self::$appLogFile, 'a');
         $timeStamp = date('Y-m-d h:i:s');
         if ($backTrace === true) {
-            $backArray = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) : debug_backtrace(false);
+            if ($backArray = defined('DEBUG_BACKTRACE_IGNORE_ARGS')) {
+                debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            }
+            else {
+                debug_backtrace(false);
+            }
             $message = $message . "\r\n" . print_r($backArray, true);
         }
         fwrite($fd, $timeStamp . " -- " . $message . "\r\n");
@@ -145,9 +157,9 @@ Class pmikro {
 }
 
 /**
- * Interface iPmikro
+ * Interface iPmikroController
  */
-Interface iPmikro {
+Interface iPmikroController {
 
     public static function getRoot();
 }
