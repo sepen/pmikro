@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class pmikro
+ */
 Class pmikro {
 
     public static $appMode;
@@ -10,6 +13,9 @@ Class pmikro {
     public static $appRequestArray;
     public static $appOutput;
 
+    /**
+     *
+     */
     public static function start() {
         self::$appMode = php_sapi_name();
         self::$appDir = $_SERVER['DOCUMENT_ROOT'] . '/../app';
@@ -22,15 +28,23 @@ Class pmikro {
         self::route();
     }
 
+    /**
+     * @param string $uri
+     *
+     * @return mixed
+     */
     public static function get($uri = '/') {
         self::$appRequestArray = explode('/', $uri);
 
         return self::route();
     }
 
+    /**
+     * Handles autoloading of classes.
+     */
     protected static function autoload() {
         $loadDirs = [
-            self::$appDir . '/vendor/pmikro',
+            self::$appDir . '/../vendor/pmikro',
             self::$appDir . '/routes'
         ];
 
@@ -46,6 +60,9 @@ Class pmikro {
         }
     }
 
+    /**
+     * @return mixed
+     */
     protected static function route() {
 
         (isset(self::$appRequestArray[0]) && self::$appRequestArray[0] != '') ? $route_0 = self::$appRequestArray[0] : $route_0 = 'root';
@@ -76,14 +93,25 @@ Class pmikro {
         }
     }
 
+    /**
+     *
+     */
     public static function out() {
         echo self::$appOutput;
     }
 
+    /**
+     * @param $code
+     */
     public static function error($code) {
-        echo file_get_contents(self::$appDir . '/view/static/error404.html');
+        echo file_get_contents(self::$appDir . '/views/static/error404.html');
     }
 
+    /**
+     * @param            $message
+     * @param            $value
+     * @param bool|false $backTrace
+     */
     public static function debug($message, $value, $backTrace = false) {
         $output = '<hr>'. $message . '<pre>' . print_r($value, true) . '</pre>';
         if ($backTrace === true) {
@@ -100,6 +128,10 @@ Class pmikro {
         echo $output;
     }
 
+    /**
+     * @param            $message
+     * @param bool|false $backTrace
+     */
     public static function log($message, $backTrace = false) {
         $fd = fopen(self::$appLogFile, 'a');
         $timeStamp = date('Y-m-d h:i:s');
@@ -112,6 +144,9 @@ Class pmikro {
     }
 }
 
+/**
+ * Interface iPmikro
+ */
 Interface iPmikro {
 
     public static function getRoot();

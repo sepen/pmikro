@@ -2,15 +2,24 @@
 
 class Filesystem {
 
-    var $debug = 0;
+    protected $debug = 0;
 
+    /**
+     * @param int $debug
+     */
     function __construct($debug = 0) {
         if (!empty($debug)) {
             $this->debug = $debug;
         }
     }
 
-    function ls($path, $excludes = array()) {
+    /**
+     * @param       $path
+     * @param array $excludes
+     *
+     * @return array
+     */
+    public function ls($path, $excludes = array()) {
         $files = array();
         $dirs = array();
         if ($directory = opendir($path)) {
@@ -31,7 +40,6 @@ class Filesystem {
             }
             closedir($directory);
         }
-
         return array_merge($dirs, $files);
     }
 

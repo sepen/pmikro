@@ -2,7 +2,7 @@
 
 session_start();
 
-$appFile = __DIR__.'/../app/vendor/pmikro/pmikro.php';
+$appFile = __DIR__.'/../vendor/pmikro/pmikro.php';
 
 if (is_file($appFile)) {
     require_once($appFile);
