@@ -8,11 +8,9 @@ class Template {
   var $vars = array();
     
   function __construct($name = "index") {
-    echo 'construct';
     $this->name = $name;
     $this->file = 'templates/'.$name.'.thtml';
     if (!file_exists($this->file)) {
-      echo "Error, file '".$this->file."' not exists<br />\n";
       return false;
     }
     $this->contents = file_get_contents($this->file);

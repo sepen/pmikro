@@ -2,8 +2,6 @@
 
 include('config.php');
 
-echo 'inc';
-
 $template = new Template('layout');
 
 $template->setVars(array('HEAD'     => file_get_contents('includes/head.html'),

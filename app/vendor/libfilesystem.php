@@ -4,7 +4,7 @@ class Filesystem {
 
   var $debug = 0;
 
-  function Filesystem($debug = 0) {
+  function __construct($debug = 0) {
     if (!empty($debug)) $this->debug = $debug;
     return true;
   }
