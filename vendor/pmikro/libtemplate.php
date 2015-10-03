@@ -94,11 +94,12 @@ class Template {
         $patterns = [];
         $replaces = [];
         // first render rules which are not dependent on vars
-        $contents = $this->renderInclude($contents);
+        $contents = $this->renderCommentRules($contents);
+        $contents = $this->renderIncludeRules($contents);
         foreach ($vars as $key=>$value) {
             if (is_array($value)) {
                 // render rules for arrays
-                $contents = $this->renderLoop($contents, [$key => $value]);
+                $contents = $this->renderForRules($contents, [$key => $value]);
             }
             else {
                 array_push($patterns, '#{{ ' . $key . ' }}#');
@@ -114,7 +115,7 @@ class Template {
      *
      * @return mixed
      */
-    private function renderLoop($contents, $vars) {
+    private function renderForRules($contents, $vars) {
         foreach ($vars as $varKey=>$varValue) {
             $regex = '#{% for '.$varKey.' %}((?:[^[]|{%(?!end?for '.$varKey.' %})|(?R))+){% endfor '.$varKey.' %}#';
             preg_match_all($regex, $contents, $matches);
@@ -133,7 +134,7 @@ class Template {
         return $contents;
     }
 
-    private function renderInclude($contents) {
+    private function renderIncludeRules($contents) {
         $regex = '#{% include \'((\S)*)\' %}#';
         preg_match_all($regex, $contents, $matches);
         foreach ($matches[1] as $key=>$value) {
@@ -144,5 +145,10 @@ class Template {
             }
         }
         return $contents;
+    }
+
+    private function renderCommentRules($contents) {
+        $regex = '#{\# (.*)+ \#}#';
+        return preg_replace($regex, '', $contents);
     }
 }
