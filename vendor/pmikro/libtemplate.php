@@ -80,14 +80,14 @@ class Template {
         $replaces = [];
         foreach ($this->templateVars as $key => $value) {
             if (is_array($value)) {
-                $regexp = '/<!-- loop: ' . $key . ' -->\n'
+                $regexp = '/{{loop: ' . $key . '}}\n'
                     . '(.*\n)*'
-                    . '<!-- end loop: ' . $key . ' -->/';
+                    . '{{end_loop: ' . $key . '}}/';
                 preg_match($regexp, $this->templateOutput, $m);
                 if (isset($m[0])) {
                     $loop = $m[0];
-                    $loop = preg_replace('/<!-- loop: ' . $key . ' -->/', '', $loop);
-                    $loop = preg_replace('/<!-- end loop: ' . $key . ' -->/', '', $loop);
+                    $loop = preg_replace('/{{loop: ' . $key . '}}/', '', $loop);
+                    $loop = preg_replace('/{{end_loop: ' . $key . '}}/', '', $loop);
                     $ltmp = "";
                     foreach ($value as $va) {
                         $loop_tmp = $loop;

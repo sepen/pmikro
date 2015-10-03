@@ -17,8 +17,7 @@ Class rootController extends pmikro implements iPmikroController {
                             'FOOTER'   => file_get_contents($static_dir . '/footer.html')]);
 
         include($config_dir . '/navpanel.php'); # include navpanel array
-
-        $template->setVars(array('NAVPANEL' => $navpanel));
+        $template->setVars(['NAVPANEL' => $navpanel]);
 
         self::$appOutput = $template->getContents();
         self::out();
