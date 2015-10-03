@@ -115,21 +115,19 @@ class Template {
      * @return mixed
      */
     private function renderLoop($contents, $vars) {
-        foreach ($vars as $key=>$value) {
-            $regex = '#{% for '.$key.' %}((?:[^[]|{%(?!end?for '.$key.' %})|(?R))+){% endfor '.$key.' %}#';
-            preg_match($regex, $contents, $matches);
-            foreach ($matches as $matchedLine) {
-                $loopLine = preg_replace('#{% for '.$key.' %}#', '', $matchedLine);
-                $loopLine = preg_replace('#{% endfor '.$key.' %}#', '', $loopLine);
-                $tmp = '';
-                foreach ($value as $va) {
-                    $tmpLine = $loopLine;
-                    foreach ($va as $k => $v) {
+        foreach ($vars as $varKey=>$varValue) {
+            $regex = '#{% for '.$varKey.' %}((?:[^[]|{%(?!end?for '.$varKey.' %})|(?R))+){% endfor '.$varKey.' %}#';
+            preg_match_all($regex, $contents, $matches);
+            foreach ($matches[1] as $matchKey => $matchValue) {
+                $tmpContents = '';
+                foreach ($varValue as $value) {
+                    $tmpLine = $matchValue;
+                    foreach ($value as $k => $v) {
                         $tmpLine = $this->render($tmpLine, [$k => $v]);
                     }
-                    $tmp .= $tmpLine;
+                    $tmpContents .= $tmpLine;
                 }
-                $contents = preg_replace($regex, $tmp, $contents);
+                $contents = preg_replace($regex, $tmpContents, $contents);
             }
         }
         return $contents;
