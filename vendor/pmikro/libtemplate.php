@@ -93,12 +93,14 @@ class Template {
     public function render($contents, $vars) {
         $patterns = [];
         $replaces = [];
+        // first render rules which are not dependent on vars
+        $contents = $this->renderInclude($contents);
         foreach ($vars as $key=>$value) {
             if (is_array($value)) {
+                // render rules for arrays
                 $contents = $this->renderLoop($contents, [$key => $value]);
             }
             else {
-                $contents = $this->renderInclude($contents);
                 array_push($patterns, '/{{' . $key . '}}/');
                 array_push($replaces, $value);
             }
