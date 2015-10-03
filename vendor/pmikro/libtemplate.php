@@ -116,13 +116,11 @@ class Template {
      */
     private function renderLoop($contents, $vars) {
         foreach ($vars as $key=>$value) {
-            $regexp = '/{% for ' . $key . ' %}\n'
-                . '(.*\n)*'
-                . '{% endfor ' . $key . ' %}/';
+            $regexp = '/{% for '.$key.' %}(.*\n)+.*{% endfor '.$key.' %}/';
             preg_match($regexp, $contents, $matches);
             foreach ($matches as $matchedLine) {
-                $loopLine = preg_replace('/{% for ' . $key . ' %}/', '', $matchedLine);
-                $loopLine = preg_replace('/{% endfor ' . $key . ' %}/', '', $loopLine);
+                $loopLine = preg_replace('/{% for '.$key.' %}/', '', $matchedLine);
+                $loopLine = preg_replace('/{% endfor '.$key.' %}/', '', $loopLine);
                 $tmp = '';
                 foreach ($value as $va) {
                     $tmpLine = $loopLine;
@@ -138,13 +136,13 @@ class Template {
     }
 
     private function renderInclude($contents) {
-        $regexp = '/{% include (.*) %}/';
+        $regexp = '/{% include \'(.*)\' %}/';
         preg_match_all($regexp, $contents, $matches);
         foreach ($matches[1] as $key=>$value) {
             $includeFile = pmikro::$appDir . '/views/templates/' . $value;
             if (file_exists($includeFile)) {
                 $fileContents = file_get_contents($includeFile);
-                $contents = preg_replace('/{% include '.$value.' %}/', $fileContents, $contents);
+                $contents = preg_replace('/{% include \''.$value.'\' %}/', $fileContents, $contents);
                 pmikro::log($contents);
             }
         }
