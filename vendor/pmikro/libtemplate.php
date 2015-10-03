@@ -101,7 +101,7 @@ class Template {
                 $contents = $this->renderLoop($contents, [$key => $value]);
             }
             else {
-                array_push($patterns, '/{{' . $key . '}}/');
+                array_push($patterns, '/{{ ' . $key . ' }}/');
                 array_push($replaces, $value);
             }
         }
@@ -116,13 +116,13 @@ class Template {
      */
     private function renderLoop($contents, $vars) {
         foreach ($vars as $key=>$value) {
-            $regexp = '/{{loop: ' . $key . '}}\n'
+            $regexp = '/{% for ' . $key . ' %}\n'
                 . '(.*\n)*'
-                . '{{end_loop: ' . $key . '}}/';
+                . '{% endfor ' . $key . ' %}/';
             preg_match($regexp, $contents, $matches);
             foreach ($matches as $matchedLine) {
-                $loopLine = preg_replace('/{{loop: ' . $key . '}}/', '', $matchedLine);
-                $loopLine = preg_replace('/{{end_loop: ' . $key . '}}/', '', $loopLine);
+                $loopLine = preg_replace('/{% for ' . $key . ' %}/', '', $matchedLine);
+                $loopLine = preg_replace('/{% endfor ' . $key . ' %}/', '', $loopLine);
                 $tmp = '';
                 foreach ($value as $va) {
                     $tmpLine = $loopLine;
@@ -138,13 +138,13 @@ class Template {
     }
 
     private function renderInclude($contents) {
-        $regexp = '/{{include: (.*)}}/';
+        $regexp = '/{% include (.*) %}/';
         preg_match_all($regexp, $contents, $matches);
         foreach ($matches[1] as $key=>$value) {
             $includeFile = pmikro::$appDir . '/views/templates/' . $value;
             if (file_exists($includeFile)) {
                 $fileContents = file_get_contents($includeFile);
-                $contents = preg_replace('/{{include: '.$value.'}}/', $fileContents, $contents);
+                $contents = preg_replace('/{% include '.$value.' %}/', $fileContents, $contents);
                 pmikro::log($contents);
             }
         }

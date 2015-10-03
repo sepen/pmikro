@@ -13,8 +13,8 @@ Class rootController extends pmikro implements iPmikroController {
         $template = new Template('layout');
 
         include($config_dir . '/navpanel.php'); # include navpanel array
-        $template->setVars(['NAVPANEL' => $navpanel]);
-        $template->setVars(['CONTENTS' => file_get_contents($static_dir . '/home.html')]);
+        $template->setVars(['navpanel' => $navpanel]);
+        $template->setVars(['contents' => file_get_contents($static_dir . '/home.html')]);
 
         self::$appOutput = $template->getContents();
         self::out();

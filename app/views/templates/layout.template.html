@@ -1,15 +1,15 @@
-{{include: header.template.html}}
+{% include header.template.html %}
 
 <section id="navpanel">
-{{loop: NAVPANEL}}
-<span class="item">
-<a href="{{HREF}}">{{CAPTION}}</a>
-</span>
-{{end_loop: NAVPANEL}}
+{% for navpanel %}
+    <span class="item">
+        <a href="{{ href }}">{{ label }}</a>
+    </span>
+{% endfor navpanel %}
 </section>
 
 <section id="contents">
-{{CONTENTS}}
+{{ contents }}
 </section>
 
-{{include: footer.template.html}}
+{% include footer.template.html %}
