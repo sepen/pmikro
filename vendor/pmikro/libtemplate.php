@@ -4,7 +4,12 @@
  * Template engine which do
  *
  * - Valid for static templates (html, xml, css, json, txt, md, ...)
- * - Replaces contents based on associative arrays passed as arguments
+ * - Render operations are based on regular expressions
+ *
+ * Syntax rules have to follow this guidelines:
+ *
+ * - Items to substitute delimited by {{ and }}
+ * - Delimiter structures like loop at the begin of each line
  *
  */
 
@@ -60,67 +65,87 @@ class Template {
      * @return string
      */
     public function getContents() {
-        $this->render();
+        $this->templateOutput = $this->render($this->templateOutput, $this->templateVars);
         return $this->templateOutput;
+    }
+
+    /**
+     * @param $contents
+     */
+    public function setContents($contents) {
+        $this->templateOutput = $contents;
     }
 
     /**
      *
      */
     public function printContents() {
-        $this->render();
+        $this->templateOutput = $this->render($this->templateOutput, $this->templateVars);
         print $this->templateOutput;
     }
 
     /**
+     * @param $contents
+     * @param $vars
      *
+     * @return mixed
      */
-    private function render() {
+    public function render($contents, $vars) {
         $patterns = [];
         $replaces = [];
-        foreach ($this->templateVars as $key=>$value) {
+        foreach ($vars as $key=>$value) {
             if (is_array($value)) {
-                $this->renderLoop($key, $value);
-            } else {
+                $contents = $this->renderLoop($contents, [$key => $value]);
+            }
+            else {
+                $contents = $this->renderInclude($contents);
                 array_push($patterns, '/{{' . $key . '}}/');
                 array_push($replaces, $value);
             }
         }
-        $this->templateOutput = preg_replace($patterns, $replaces, $this->templateOutput);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    private function renderLoop($key, $value) {
-        $regexp = '/{{loop: ' . $key . '}}\n'
-            . '(.*\n)*'
-            . '{{end_loop: ' . $key . '}}/';
-        preg_match($regexp, $this->templateOutput, $matches);
-        foreach($matches as $matchedLine) {
-            $loop = preg_replace('/{{loop: ' . $key . '}}/', '', $matchedLine);
-            $loop = preg_replace('/{{end_loop: ' . $key . '}}/', '', $loop);
-            $tmp = '';
-            foreach ($value as $va) {
-                $loop_tmp = $loop;
-                foreach ($va as $k=>$v) {
-                    $loop_tmp = $this->renderVar($loop_tmp, $k, $v);
-                }
-                $tmp .= $loop_tmp;
-            }
-            $this->templateOutput = preg_replace($regexp, $tmp, $this->templateOutput);
-        }
+        return preg_replace($patterns, $replaces, $contents);
     }
 
     /**
      * @param $contents
-     * @param $key
-     * @param $value
+     * @param $vars
      *
      * @return mixed
      */
-    private function renderVar($contents, $key, $value) {
-        return preg_replace('/{{' . $key . '}}/', $value, $contents);
+    private function renderLoop($contents, $vars) {
+        foreach ($vars as $key=>$value) {
+            $regexp = '/{{loop: ' . $key . '}}\n'
+                . '(.*\n)*'
+                . '{{end_loop: ' . $key . '}}/';
+            preg_match($regexp, $contents, $matches);
+            foreach ($matches as $matchedLine) {
+                $loopLine = preg_replace('/{{loop: ' . $key . '}}/', '', $matchedLine);
+                $loopLine = preg_replace('/{{end_loop: ' . $key . '}}/', '', $loopLine);
+                $tmp = '';
+                foreach ($value as $va) {
+                    $tmpLine = $loopLine;
+                    foreach ($va as $k => $v) {
+                        $tmpLine = $this->render($tmpLine, [$k => $v]);
+                    }
+                    $tmp .= $tmpLine;
+                }
+                $contents = preg_replace($regexp, $tmp, $contents);
+            }
+        }
+        return $contents;
+    }
+
+    private function renderInclude($contents) {
+        $regexp = '/{{include: (.*)}}/';
+        preg_match($regexp, $contents, $matches);
+        foreach ($matches as $matchedLine) {
+            $tmp = str_replace('}}', '', $matchedLine);
+            $tmp = str_replace('{{include: ', '', $tmp);
+            $includeFile = pmikro::$appDir . '/views/templates/' . $tmp;
+            if (file_exists($includeFile)) {
+                $contents = preg_replace($regexp, file_get_contents($includeFile), $contents);
+            }
+        }
+        return $contents;
     }
 }
