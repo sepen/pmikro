@@ -101,7 +101,7 @@ class Template {
                 $contents = $this->renderLoop($contents, [$key => $value]);
             }
             else {
-                array_push($patterns, '/{{ ' . $key . ' }}/');
+                array_push($patterns, '#{{ ' . $key . ' }}#');
                 array_push($replaces, $value);
             }
         }
@@ -116,11 +116,11 @@ class Template {
      */
     private function renderLoop($contents, $vars) {
         foreach ($vars as $key=>$value) {
-            $regexp = '/{% for '.$key.' %}(.*\n)+.*{% endfor '.$key.' %}/';
-            preg_match($regexp, $contents, $matches);
+            $regex = '#{% for '.$key.' %}((?:[^[]|{%(?!end?for '.$key.' %})|(?R))+){% endfor '.$key.' %}#';
+            preg_match($regex, $contents, $matches);
             foreach ($matches as $matchedLine) {
-                $loopLine = preg_replace('/{% for '.$key.' %}/', '', $matchedLine);
-                $loopLine = preg_replace('/{% endfor '.$key.' %}/', '', $loopLine);
+                $loopLine = preg_replace('#{% for '.$key.' %}#', '', $matchedLine);
+                $loopLine = preg_replace('#{% endfor '.$key.' %}#', '', $loopLine);
                 $tmp = '';
                 foreach ($value as $va) {
                     $tmpLine = $loopLine;
@@ -129,21 +129,20 @@ class Template {
                     }
                     $tmp .= $tmpLine;
                 }
-                $contents = preg_replace($regexp, $tmp, $contents);
+                $contents = preg_replace($regex, $tmp, $contents);
             }
         }
         return $contents;
     }
 
     private function renderInclude($contents) {
-        $regexp = '/{% include \'(.*)\' %}/';
-        preg_match_all($regexp, $contents, $matches);
+        $regex = '#{% include \'((\S)*)\' %}#';
+        preg_match_all($regex, $contents, $matches);
         foreach ($matches[1] as $key=>$value) {
             $includeFile = pmikro::$appDir . '/views/templates/' . $value;
             if (file_exists($includeFile)) {
                 $fileContents = file_get_contents($includeFile);
-                $contents = preg_replace('/{% include \''.$value.'\' %}/', $fileContents, $contents);
-                pmikro::log($contents);
+                $contents = preg_replace('#{% include \''.$value.'\' %}#', $fileContents, $contents);
             }
         }
         return $contents;
