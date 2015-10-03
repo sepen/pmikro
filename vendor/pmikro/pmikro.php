@@ -120,7 +120,7 @@ Class pmikro {
      * @param bool|false $backTrace
      */
     public static function debug($message, $value, $backTrace = false) {
-        $output = '<hr>'. $message . '<pre>' . print_r($value, true) . '</pre>';
+        $output = "\n<hr>\n". $message . "\n<pre>\n" . print_r($value, true) . "\n</pre>\n";
         if ($backTrace === true) {
             $backTraceArray = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) : debug_backtrace(false);
             foreach ($backTraceArray as $backTraceLine) {
