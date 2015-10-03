@@ -139,13 +139,13 @@ class Template {
 
     private function renderInclude($contents) {
         $regexp = '/{{include: (.*)}}/';
-        preg_match($regexp, $contents, $matches);
-        foreach ($matches as $matchedLine) {
-            $tmp = str_replace('}}', '', $matchedLine);
-            $tmp = str_replace('{{include: ', '', $tmp);
-            $includeFile = pmikro::$appDir . '/views/templates/' . $tmp;
+        preg_match_all($regexp, $contents, $matches);
+        foreach ($matches[1] as $key=>$value) {
+            $includeFile = pmikro::$appDir . '/views/templates/' . $value;
             if (file_exists($includeFile)) {
-                $contents = preg_replace($regexp, file_get_contents($includeFile), $contents);
+                $fileContents = file_get_contents($includeFile);
+                $contents = preg_replace('/{{include: '.$value.'}}/', $fileContents, $contents);
+                pmikro::log($contents);
             }
         }
         return $contents;
