@@ -12,7 +12,7 @@ Class rootController extends pmikro implements iPmikroController {
 
         $template = new Template('layout');
 
-        include($config_dir . '/navpanel.php'); # include navpanel array
+        $navpanel = require($config_dir . '/navpanel.php');
         $template->setVars(['navpanel' => $navpanel]);
         $template->setVars(['contents' => file_get_contents($static_dir . '/home.html')]);
 
