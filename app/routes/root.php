@@ -6,22 +6,24 @@
 Class rootController extends pmikro implements iPmikroController {
 
     public static function getRoot() {
-
-        $static_dir = self::$appDir . '/views/static';
-        $config_dir = self::$appDir . '/config';
+        $navpanel = require(self::$appDir.'/config/navpanel.php');
 
         $template = new Template('layout');
-
-        $navpanel = require($config_dir . '/navpanel.php');
         $template->setVars(['navpanel' => $navpanel]);
-        $template->setVars(['contents' => file_get_contents($static_dir . '/home.html')]);
+        $template->setVars(['contents' => file_get_contents(self::$appDir.'/views/static/home.html')]);
 
         self::$appOutput = $template->getContents();
         self::out();
     }
 
     public static function getTest() {
-        self::$appOutput = file_get_contents(self::$appDir . '/views/static/test.html');
+        $navpanel = require(self::$appDir.'/config/navpanel.php');
+
+        $template = new Template('layout');
+        $template->setVars(['navpanel' => $navpanel]);
+        $template->setVars(['contents' => file_get_contents(self::$appDir.'/views/static/test.html')]);
+
+        self::$appOutput = $template->getContents();
         self::out();
     }
 }

@@ -1,7 +1,64 @@
-<html>
-<body style="margin: 20px 0; text-align: center">
-<h1>Test page</h1>
-<hr>
-<p>Request: GET /test</p>
-</body>
-</html>
+<h2>Test page</h2>
+
+<p>This page describes how <a href='/'>pmikro</a> internally works</p>
+
+<h3>Trace for this page:</h3>
+<p>
+The web server receives an HTTP request from a client:
+<pre>
+GET /test
+</pre>
+</p>
+<p>
+<b>.htaccess</b> rewrites this petition to:
+<pre>
+/index.php?req=/test
+</pre>
+</p>
+<p>
+<b>index.php</b> is called and after some internal logic it tries to look for <b>/test</b> as a valid route:
+<pre>
+if file_exists('app/routes/test.php') then
+    load_file
+    execute_function('getRoot')
+else if file_exists('app/routes/root.php') then
+    load_file
+    execute_function('getTest')
+else
+    error404
+endif
+</pre>
+</p>
+
+<p>
+Note that any reference to <b>root</b> (or <b>getRoot</b>) in <a href='/'>pmikro</a> context means <b>/</b>.
+</p>
+<p>
+For now there are two level of routes in <a href='/'>pmikro</a>:
+</p>
+<ol>
+<li>
+Top level routes or root routes and because of that defined as functions in file root.php
+</li>
+<li>
+Routes defined as functions in its own file
+</li>
+</ol>
+
+
+<p>
+Examples of different ways to obtain a route:
+</p>
+<pre>
+root.php  +  getRoot  =  /
+root.php  +  getTest  =  /test
+root.php  +  getFoo   =  /foo
+
+test.php  +  getRoot  =  /test       (or which is the same: /test/)
+test.php  +  getTest  =  /test/test
+test.php  +  getFoo   =  /test/foo
+
+foo.php   +  getRoot  =  /foo        (or which is the same: /foo/)
+foo.php   +  getTest  =  /foo/test
+foo.php   +  getFoo   =  /foo/foo
+</pre>
