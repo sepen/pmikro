@@ -44,8 +44,7 @@ Class pmikro {
      */
     protected static function autoload() {
         $loadDirs = [
-            self::$appDir . '/../vendor/pmikro',
-            self::$appDir . '/routes'
+            self::$appDir . '/../vendor/pmikro'
         ];
 
         foreach($loadDirs as $loadDir) {
@@ -66,22 +65,23 @@ Class pmikro {
     protected static function route() {
 
         $routeArray = ['root', 'root'];
-
         if (isset(self::$appRequestArray[0]) && self::$appRequestArray[0] != '') {
             $routeArray[0] = self::$appRequestArray[0];
         }
-        $routeFile = self::$appDir . '/routes/' . $routeArray[0] . '.php';
 
+        $routeFile = self::$appDir . '/routes/' . $routeArray[0] . '.php';
         if (is_file($routeFile)) {
-            require_once($routeFile);
             if (isset(self::$appRequestArray[1]) && self::$appRequestArray[1] != '') {
                 $routeArray[1] = self::$appRequestArray[1];
             }
         }
         else {
+            $routeFile = self::$appDir . '/routes/root.php';
             $routeArray[1] = $routeArray[0];
             $routeArray[0] = 'root';
         }
+
+        require_once($routeFile);
         $routeClass = strtolower($routeArray[0]) . 'Controller';
         $routeAction = strtolower(self::$appRequestMethod) . ucfirst(strtolower($routeArray[1]));
 
