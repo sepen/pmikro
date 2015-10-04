@@ -1,5 +1,5 @@
 {
   "item1" : "value1",
   "item2" : "value2",
-  "item3" : "{{EXAMPLE_VALUE}}"
+  "item3" : "{{ EXAMPLE_VALUE }}"
 }

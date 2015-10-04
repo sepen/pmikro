@@ -56,9 +56,9 @@ class Template {
      *
      */
     public function printVars() {
-        echo "<pre>\n";
+        echo "\n<pre>\n";
         print_r($this->templateVars);
-        echo "<pre><br />\n";
+        echo "\n<pre>\n<br />\n";
     }
 
     /**
