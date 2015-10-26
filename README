@@ -9,6 +9,10 @@ INSTALLATION
   Just copy it to your desired destination (i.e: /var/www/vhosts/mysite.com)
   
 
+REQUERIMENTS
+
+  You will need Apache's mod_rewrite
+
 
 APACHE CONFIG EXAMPLE
 
