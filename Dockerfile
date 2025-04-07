@@ -6,5 +6,10 @@ COPY app /var/www/pmikro/app/
 COPY pub /var/www/pmikro/pub/
 COPY vendor /var/www/pmikro/vendor/
 
-EXPOSE 80
-CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www/pmikro/pub"]
+# Expose port 8000 for local development only (php -S is not production-ready)
+EXPOSE 8000
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "/var/www/pmikro/pub"]
+
+# You can run the container with:
+#   docker run -it --rm -p 8000:8000 -v $(pwd):/var/www/pmikro pmikro
+# Then access the application at http://localhost:8000
