@@ -1,46 +1,55 @@
 <?php
 
-class Filesystem {
+class Filesystem
+{
+    protected int $debug = 0;
 
-    protected $debug = 0;
-
-    /**
-     * @param int $debug
-     */
-    function __construct($debug = 0) {
-        if (!empty($debug)) {
-            $this->debug = $debug;
-        }
+    public function __construct(int $debug = 0)
+    {
+        $this->debug = $debug;
     }
 
     /**
-     * @param       $path
-     * @param array $excludes
+     * List files and directories in a path, optionally excluding some.
      *
+     * @param string $path
+     * @param array $excludes
      * @return array
      */
-    public function ls($path, $excludes = array()) {
-        $files = array();
-        $dirs = array();
-        if ($directory = opendir($path)) {
-            while ($f = readdir($directory)) {
-                if ($this->debug) {
-                    echo "f: $f<br />\n";
-                }
-                $fpath = $path . "/" . $f;
-                if ($f != "." && $f != "..") {
-                    if (!in_array($f, $excludes)) {
-                        if (is_dir($fpath)) {
-                            array_push($dirs, $f);
-                        } elseif (is_file($fpath)) {
-                            array_push($files, $f);
-                        }
-                    }
-                }
-            }
-            closedir($directory);
+    public function ls(string $path, array $excludes = []): array
+    {
+        $files = [];
+        $dirs = [];
+
+        if (!is_dir($path)) {
+            return [];
         }
+
+        $directory = opendir($path);
+        if (!$directory) {
+            return [];
+        }
+
+        while (($f = readdir($directory)) !== false) {
+            if ($this->debug) {
+                echo "f: $f<br />\n";
+            }
+
+            if (in_array($f, ['.', '..']) || in_array($f, $excludes)) {
+                continue;
+            }
+
+            $fpath = $path . DIRECTORY_SEPARATOR . $f;
+
+            if (is_dir($fpath)) {
+                $dirs[] = $f;
+            } elseif (is_file($fpath)) {
+                $files[] = $f;
+            }
+        }
+
+        closedir($directory);
+
         return array_merge($dirs, $files);
     }
-
 }

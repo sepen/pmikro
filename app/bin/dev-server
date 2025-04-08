@@ -2,4 +2,4 @@
 
 basedir=$(cd $(dirname $(find $0))/../../; pwd)
 
-php -S localhost:8888 -t $basedir/pub
+php -S localhost:8000 -t $basedir/pub

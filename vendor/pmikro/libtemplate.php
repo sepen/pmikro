@@ -1,154 +1,132 @@
 <?php
 
-/*
- * Template engine which do
- *
- * - Valid for static templates (html, xml, css, json, txt, md, ...)
- * - Render operations are based on regular expressions
- *
- * Syntax rules have to follow this guidelines:
- *
- * - Items to substitute delimited by {{ and }}
- * - Delimiter structures like loop at the begin of each line
- *
- */
-
 /**
- * Class Template
+ * Template engine for static templates (html, xml, css, json, txt, md, ...)
+ * - Render operations are based on regular expressions
+ * - Syntax:
+ *   - Variables: {{ var }}
+ *   - Loops: {% for var %}...{% endfor var %}
+ *   - Includes: {% include 'file' %}
+ *   - Comments: {# comment #}
  */
-class Template {
+class Template
+{
+    protected string $templateName;
+    protected string $templateType;
+    protected string $templateFile;
+    protected array $templateVars = [];
+    protected string $templateOutput;
 
-    protected $templateName;
-    protected $templateType;
-    protected $templateFile;
-    protected $templateVars = [];
-    protected $templateOutput;
-
-    /**
-     * @param string $name
-     * @param string $type
-     */
-    function __construct($name = 'index', $type = 'html') {
+    public function __construct(string $name = 'index', string $type = 'html')
+    {
         $this->templateName = $name;
         $this->templateType = $type;
         $this->templateFile = pmikro::$appDir . '/views/templates/' . $this->templateName . '.template.' . $this->templateType;
+
         if (!file_exists($this->templateFile)) {
-            die('ERROR: template does not exists '. $this->templateFile);
+            throw new RuntimeException('ERROR: Template does not exist: ' . $this->templateFile);
         }
+
         $this->templateOutput = file_get_contents($this->templateFile);
     }
 
-    /**
-     * @param array $vars
-     */
-    public function setVars($vars = []) {
+    public function setVars(array $vars = []): void
+    {
         $this->templateVars = array_merge($this->templateVars, $vars);
     }
 
-    /**
-     * @return array
-     */
-    public function getVars() {
+    public function getVars(): array
+    {
         return $this->templateVars;
     }
 
-    /**
-     *
-     */
-    public function printVars() {
+    public function printVars(): void
+    {
         echo "\n<pre>\n";
         print_r($this->templateVars);
-        echo "\n<pre>\n<br />\n";
+        echo "\n</pre>\n<br />\n";
     }
 
-    /**
-     * @return string
-     */
-    public function getContents() {
+    public function getContents(): string
+    {
         $this->templateOutput = $this->render($this->templateOutput, $this->templateVars);
         return $this->templateOutput;
     }
 
-    /**
-     * @param $contents
-     */
-    public function setContents($contents) {
+    public function setContents(string $contents): void
+    {
         $this->templateOutput = $contents;
     }
 
-    /**
-     *
-     */
-    public function printContents() {
+    public function printContents(): void
+    {
         $this->templateOutput = $this->render($this->templateOutput, $this->templateVars);
-        print $this->templateOutput;
+        echo $this->templateOutput;
     }
 
-    /**
-     * @param $contents
-     * @param $vars
-     *
-     * @return mixed
-     */
-    public function render($contents, $vars) {
-        $patterns = [];
-        $replaces = [];
-        // first render rules which are not dependent on vars
+    public function render(string $contents, array $vars): string
+    {
         $contents = $this->renderCommentRules($contents);
         $contents = $this->renderIncludeRules($contents);
-        foreach ($vars as $key=>$value) {
+
+        foreach ($vars as $key => $value) {
             if (is_array($value)) {
-                // render rules for arrays
                 $contents = $this->renderForRules($contents, [$key => $value]);
-            }
-            else {
-                array_push($patterns, '#{{ ' . $key . ' }}#');
-                array_push($replaces, $value);
+            } else {
+                $pattern = '#{{\s*' . preg_quote($key, '#') . '\s*}}#';
+                $replacement = $this->templateType === 'html'
+                    ? (string)$value
+                    : htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+                $contents = preg_replace($pattern, $replacement, $contents);
             }
         }
-        return preg_replace($patterns, $replaces, $contents);
+
+        return $contents;
     }
 
-    /**
-     * @param $contents
-     * @param $vars
-     *
-     * @return mixed
-     */
-    private function renderForRules($contents, $vars) {
-        foreach ($vars as $varKey=>$varValue) {
-            $regex = '#{% for '.$varKey.' %}((?:[^[]|{%(?!end?for '.$varKey.' %})|(?R))+){% endfor '.$varKey.' %}#';
+    private function renderForRules(string $contents, array $vars): string
+    {
+        foreach ($vars as $varKey => $varValue) {
+            $regex = '#{% for ' . preg_quote($varKey, '#') . ' %}(.*?){% endfor ' . preg_quote($varKey, '#') . ' %}#s';
             preg_match_all($regex, $contents, $matches);
-            foreach ($matches[1] as $matchKey => $matchValue) {
+
+            foreach ($matches[1] as $matchContent) {
                 $tmpContents = '';
-                foreach ($varValue as $value) {
-                    $tmpLine = $matchValue;
-                    foreach ($value as $k => $v) {
+                foreach ($varValue as $item) {
+                    $tmpLine = $matchContent;
+                    foreach ($item as $k => $v) {
                         $tmpLine = $this->render($tmpLine, [$k => $v]);
                     }
                     $tmpContents .= $tmpLine;
                 }
-                $contents = preg_replace($regex, $tmpContents, $contents);
+                $contents = preg_replace($regex, $tmpContents, $contents, 1);
             }
         }
+
         return $contents;
     }
 
-    private function renderIncludeRules($contents) {
-        $regex = '#{% include \'((\S)*)\' %}#';
+    private function renderIncludeRules(string $contents): string
+    {
+        $regex = '#{% include \'([^\']+)\' %}#';
         preg_match_all($regex, $contents, $matches);
-        foreach ($matches[1] as $key=>$value) {
-            $includeFile = pmikro::$appDir . '/views/templates/' . $value;
-            if (file_exists($includeFile)) {
-                $fileContents = file_get_contents($includeFile);
-                $contents = preg_replace('#{% include \''.$value.'\' %}#', $fileContents, $contents);
+
+        foreach ($matches[1] as $fileName) {
+            $includePath = realpath(pmikro::$appDir . '/views/templates/' . $fileName);
+            $baseDir = realpath(pmikro::$appDir . '/views/templates/');
+
+            if ($includePath && str_starts_with($includePath, $baseDir) && file_exists($includePath)) {
+                $fileContents = file_get_contents($includePath);
+                $contents = str_replace("{% include '" . $fileName . "' %}", $fileContents, $contents);
             }
         }
+
         return $contents;
     }
 
-    private function renderCommentRules($contents) {
-        $regex = '#{\# (.*)+ \#}#';
-        return preg_replace($regex, '', $contents);
+    private function renderCommentRules(string $contents): string
+    {
+        $result = preg_replace('/\{\#.*?\#\}/s', '', $contents);
+        return $result ?? '';
     }
 }

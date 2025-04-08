@@ -1,4 +1,4 @@
-FROM php:5.6.40-alpine
+FROM php:8.4-alpine
 
 WORKDIR /pmikro
 
