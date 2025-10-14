@@ -1,0 +1,28 @@
+<h1>pmikro</h1>
+
+Page generated from <code>/views/static/index.html</code>
+
+<h2>Source code</h2>
+
+Set the navigation panel
+<pre>
+$navpanel = require(self::$appDir.'/config/navpanel.php');
+</pre>
+
+Set the contents of the page
+<pre>
+$contents = file_get_contents(self::$appDir.'/views/static/index.html');
+</pre>
+
+Create a new Template object and set the variables for the template
+<pre>
+$template = new Template('layout');
+$template->setVars(['navpanel' => $navpanel]);
+$template->setVars(['contents' => $contents]);
+</pre>
+
+Render the template
+<pre>
+self::$appOutput = $template->getContents();
+self::out();
+</pre>

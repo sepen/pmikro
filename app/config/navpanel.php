@@ -1,14 +1,10 @@
 <?php
 
-return [['label' => 'main',
-         'href'  => '/',],
-        ['label' => 'test',
-         'href'  => 'test'],
-        ['label' => 'page1',
-         'href'  => 'page1'],
-        ['label' => 'page1/foo',
-         'href'  => 'page1/foo'],
-        ['label' => 'page1/examplejson',
-         'href'  => 'page1/examplejson'],
-        ['label' => 'page2',
-         'href'  => 'page2']];
+return [
+    ['label' => 'pmikro',     'href'  => '/',],
+    ['label' => 'markdown',   'href'  => '/sub1'],
+    ['label' => 'html',       'href'  => '/sub2'],
+    ['label' => 'raw',        'href'  => '/sample'],
+    ['label' => 'json',       'href'  => '/sample/sub1'],
+    ['label' => 'error',      'href'  => '/null']
+];

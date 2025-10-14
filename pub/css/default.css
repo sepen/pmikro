@@ -1,62 +1,75 @@
 body {
     font-size: 10pt;
     font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;
-    background-color: #2c2f38; /* Dark background */
+    background-color: #444;
     color: #e4e4e4; /* Light text */
     text-align: center;
     margin: 0;
 }
 
 a {
-    color: #80aaff; /* Light blue for links */
+    color: #8494cf; /* Light blue for links */
     text-decoration: none;
 }
 
 a:hover {
-    color: #ffffff; /* White on hover */
+    color: #3153d4; /* White on hover */
 }
 
 img {
     border: 0;
 }
 
+code {
+    background-color: #2e2e2e; /* Dark background for pre */
+    padding: 0 2px;
+    color: #e4e4e4; /* Light text for pre */
+}
+
 pre {
-    background-color: #3c4149; /* Dark background for pre */
+    background-color: #2e2e2e; /* Dark background for pre */
     padding: 10px;
     border: 2px solid #555;
     color: #e4e4e4; /* Light text for pre */
 }
 
+blockquote {
+    border: 4px solid #555; /* Dark border for blockquote */
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+    border-left-color: #8494cf;
+    margin: 10px 0 0 20px;
+    padding: 20px;
+    font-size: small;
+}
+
 #page {
     margin: 0 auto;
     padding: 0;
-    width: 760px;
-    background-color: #3a3f47; /* Dark background for the page */
-    border: 2px solid #444;
-    border-top: none;
-    border-bottom: none;
+    width: 100%;
+    border: none;
     text-align: left;
-    border-radius: 10px;
 }
 
 header {
-    padding: 10px 20px;
-    background-color: #ffffff; /* Dark background for header */
+    padding: 10px;
+    background-color: #15181B; /* Dark background for header */
 }
 
 #iconlogo {
-    margin: 10px 0 0 0;
+    margin: 0 0;
     float: right;
+    height: 40px;
+    width: auto;
+    border: none;
 }
 
 #navpanel {
     margin: 0 0;
-    padding: 4px 14px;
-    border: 2px solid #444;
-    border-left: none;
-    border-right: none;
-    background: #333a42; /* Dark background for the navigation panel */
-    border-radius: 5px;
+    padding: 0 4px;
+    border: none;
+    background: #15181B;
 }
 
 #navpanel .item {
@@ -64,42 +77,39 @@ header {
     padding: 5px 15px;
     display: inline-block;
     border-radius: 5px;
-    background-color: #444;
-    color: #e4e4e4; /* Light text for items */
+    color: #444; /* Light text for items */
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 #navpanel .item:hover {
-    background-color: #555; /* Darker on hover */
+    background-color: #444; /* On hover */
 }
 
 #navpanel .item.active {
-    background-color: #007bff; /* Blue for active tab */
-    color: white;
+    border-color: #3153d4; /* Blue for active tab */
 }
 
 #navpanel a {
-    color: #e4e4e4; /* Light color for links in nav */
+    color: #c0bbbb; /* Color for links in nav */
     font-weight: bold;
 }
 
 #navpanel a:hover {
-    color: #007bff; /* Blue hover for links */
+    color: #1371d6; /* Blue hover for links */
 }
 
 #contents {
     padding: 30px 24px;
     background-color: #444; /* Dark background for contents */
-    border-radius: 10px;
     color: #e4e4e4; /* Light text */
+    line-height: 1.5;
 }
 
 footer {
     text-align: center;
     display: block;
     padding: 14px 4px 10px 4px;
-    background-color: #353a42; /* Dark background for footer */
     color: #e4e4e4; /* Light text */
+    background-color: #444; /* Dark background for header */
 }
-

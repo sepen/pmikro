@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class Filesystem
+ *
+ * This class provides methods to interact with the filesystem.
+ * It includes a method to list files and directories in a given path.
+ */
+
 class Filesystem
 {
     protected int $debug = 0;

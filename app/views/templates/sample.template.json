@@ -1,0 +1,4 @@
+{
+  "{{ EXAMPLE_KEY1 }}" : "{{ EXAMPLE_VALUE1 }}",
+  "{{ EXAMPLE_KEY2 }}" : "{{ EXAMPLE_VALUE2 }}"
+}

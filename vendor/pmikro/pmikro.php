@@ -2,6 +2,9 @@
 
 /**
  * Class pmikro
+ *
+ * This is the main class for the pmikro framework.
+ * It handles routing, autoloading, and error handling.
  */
 Class pmikro {
 
